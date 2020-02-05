@@ -16,7 +16,6 @@ class SecurityContainer extends React.Component {
              
              <LoginForm onSubmit={this.handleSubmit}/>
                
-            
         );
     }
 }
