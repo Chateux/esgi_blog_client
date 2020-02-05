@@ -1,26 +1,65 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import {BrowserRouter, Route, Link, Switch} from 'react-router-dom';
+import SecurityContainer from "./containers/SecurityContainer";
+import Home from "./containers/Index";
+import { fetchUser } from "../redux/actions/user";
+import {connect} from "react-redux";
+import {applyMiddleware as dispatch} from "redux";
 
-function App() {
-  return (
-    <div className="App">
+class App extends React.Component {
+	
+	constructor(props) {
+        super(props);
+
+        this.props.getUser();
+    }
+
+
+  render(){
+    /*Un <Switch> regarde à travers ses enfants <Route>s et
+            rend le premier qui correspond à l'URL actuelle.*/
+    const { user } = this.props;
+    return (
+
+    <div>
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    	
+          Hello ESGI {user.email}
+           <BrowserRouter>
+                        <>  
+                        	 <Link to="/">Accueil</Link>
+                            <Link to="/login">Login</Link>
+                            <Switch>
+                                <Route path="/login" component={SecurityContainer}/>
+                                <Route path="/" exact component={Home}/>
+                            </Switch>
+                        </>
+                    </BrowserRouter>
+       
       </header>
     </div>
   );
+
+
+  }
+
+  
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    const { user: { user } } = state;
+
+    return {
+        user
+    };
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        getUser: () => dispatch(fetchUser(dispatch)),
+    }
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
